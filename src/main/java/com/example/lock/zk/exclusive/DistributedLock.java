@@ -53,7 +53,7 @@ public class DistributedLock implements Lock,Watcher{
      * CountDownLatch是通过一个计数器来实现的，计数器的初始值为线程的数量。每当一个线程完成了自己的任务后，计数器的值就会减1。
      * 当计数器值到达0时，它表示所有的线程已经完成了任务，然后在闭锁上等待的线程就可以恢复执行任务。
      */
-    private CountDownLatch connectedSignal=new CountDownLatch(1);
+    private CountDownLatch connectedSignal=new CountDownLatch(100);
     /**
      * zk max sessionTimeOut
      */
@@ -69,7 +69,6 @@ public class DistributedLock implements Lock,Watcher{
         try {
             zk = new ZooKeeper(config, sessionTimeout, this);
             //当number =0 的时候 所有请求全部释放 否则阻塞
-            connectedSignal.await();
             //此去不执行 Watcher
             Stat stat = zk.exists(root, false);
             if(stat == null){
@@ -100,6 +99,14 @@ public class DistributedLock implements Lock,Watcher{
         //其他线程放弃锁的标志
         if(this.latch != null) {
             this.latch.countDown();
+        }
+    }
+
+    public void waitFor(){
+        try {
+            connectedSignal.await();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 
@@ -137,7 +144,6 @@ public class DistributedLock implements Lock,Watcher{
             System.out.println(myZnode + " 节点已经创建成功！");
             //取出所有子节点
             List<String> subNodes = zk.getChildren(root, false);
-            //取出所有lockName的锁
             List<String> lockObjNodes = new ArrayList<String>();
             for (String node : subNodes) {
                 String _node = node.split(splitStr)[0];
@@ -232,4 +238,5 @@ public class DistributedLock implements Lock,Watcher{
             super(e);
         }
     }
+
 }

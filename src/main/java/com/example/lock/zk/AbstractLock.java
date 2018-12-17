@@ -20,7 +20,7 @@ public abstract class AbstractLock implements Lock {
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("加锁失败重试ing....");
-            waitLock();
+//            waitLock();
 
 
         }
@@ -28,7 +28,7 @@ public abstract class AbstractLock implements Lock {
     }
 
     @Override
-    public void waitLock() {
+    public boolean waitLock(String node,int sessionTime){
         //计数器
         int count = 0;
         try {
@@ -40,6 +40,7 @@ public abstract class AbstractLock implements Lock {
             e1.printStackTrace();
             count++;
         }
+        return true;
     }
 
     @Override

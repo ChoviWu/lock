@@ -1,5 +1,9 @@
 package com.example.lock.zk;
 
+/**
+ * Lock
+ * @author Administrator
+ */
 public interface Lock {
 
     /**
@@ -11,7 +15,7 @@ public interface Lock {
     /**
      * wait lock return getLock()
      */
-    void waitLock();
+    boolean waitLock(String node,int sessionTime);
 
 
     /**
@@ -19,5 +23,8 @@ public interface Lock {
      */
     boolean unlock();
 
-
+    /**
+     * overWrite the lock methods
+     */
+    void lock();
 }

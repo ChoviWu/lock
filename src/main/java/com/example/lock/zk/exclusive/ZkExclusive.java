@@ -57,4 +57,8 @@ public class ZkExclusive extends AbstractLock {
 
     }
 
+    @Override
+    public void lock() {
+
+    }
 }
